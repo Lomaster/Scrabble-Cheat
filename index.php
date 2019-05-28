@@ -1,6 +1,6 @@
 <?php
 $text = mb_strtolower(mb_convert_encoding(file_get_contents('./dictionary.txt'), "UTF-7"));
-$dict = array_flip(explode("\n", $text));
+$dict = explode("\n", $text);
 $points = [
   'a' => 1,
   'e' => 1,
@@ -45,14 +45,44 @@ $pointsJson = json_encode($points);
   <meta charset="UTF-8">
   <script type="application/javascript" src="./script.js"></script>
   <script type="application/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <title>Title</title>
+  <title>Scrabble Cheat</title>
 </head>
 <body>
+<div>
+  <label for="letters">Enter letters</label>
+  <input value="abandon" name="letters" id="letters" type="text" width="20" placeholder="case insensitive"> <button id="find">Find</button>
+</div>
+<div>Result:</div>
+<div id="result"></div>
 <script type="text/javascript">
-  var oDict = JSON.parse('<?php echo $dictJson; ?>')
-      , oPoints = JSON.parse('<?php echo $pointsJson; ?>')
-  ;
+    var dict = JSON.parse('<?php echo $dictJson; ?>')
+        , oPoints = JSON.parse('<?php echo $pointsJson; ?>')
+    ;
+    window.addEventListener('load', function() {
+        var oInputLetters = $('#letters')
+            , oButtonCalc = $('#find')
+            , oDivResult = $('#result')
+            , wordsPoints = []
+        ;
+        oButtonCalc.on('click', function () {
+            var letters = oInputLetters.val().toLowerCase()
+                , words = findWords(dict, letters)
+            ;
+            console.log('click words', words);
+            for (var i = 0; i < words.length; i++) {
+                var key = words[i],
+                    obj = {}
+                ;
+                obj[key] = calcWordPoints(key, oPoints);
+                wordsPoints.push(obj);
+            }
+            console.log('wordsPoints', wordsPoints);
+            var
+                res = sortResult(wordsPoints)
+            ;
+            showResult(oDivResult, res)
+        });
+    });
 </script>
-<input type="text" width="20"> <button>Calculate</button>
 </body>
 </html>
