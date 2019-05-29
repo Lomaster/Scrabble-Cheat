@@ -50,7 +50,7 @@ $pointsJson = json_encode($points);
 <body>
 <div>
   <label for="letters">Enter letters</label>
-  <input value="abandon" name="letters" id="letters" type="text" width="20" placeholder="case insensitive"> <button id="find">Find</button>
+  <input name="letters" id="letters" type="text" width="20" placeholder="case insensitive"> <button id="find">Find</button>
 </div>
 <div>Result:</div>
 <div id="result"></div>
@@ -62,13 +62,13 @@ $pointsJson = json_encode($points);
         var oInputLetters = $('#letters')
             , oButtonCalc = $('#find')
             , oDivResult = $('#result')
-            , wordsPoints = []
         ;
         oButtonCalc.on('click', function () {
             var letters = oInputLetters.val().toLowerCase()
-                , words = findWords(dict, letters)
+                , words = findWords(dict, letters, oPoints)
+                , wordsPoints = []
             ;
-            console.log('click words', words);
+
             for (var i = 0; i < words.length; i++) {
                 var key = words[i],
                     obj = {}
@@ -76,7 +76,7 @@ $pointsJson = json_encode($points);
                 obj[key] = calcWordPoints(key, oPoints);
                 wordsPoints.push(obj);
             }
-            console.log('wordsPoints', wordsPoints);
+
             var
                 res = sortResult(wordsPoints)
             ;

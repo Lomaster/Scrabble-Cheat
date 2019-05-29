@@ -7,11 +7,10 @@ function showResult(oCont, oWords) {
     $.each(oWords, function (index, value) {
         val = Object.values(value)[0];
         text += Object.keys(value)[0] + ' - ' + val + '<br>\n';
-        total += val;
+        total++;
     });
 
-    text += '<br>\nTotal: ' + total;
-    console.log('showResult', text);
+    text += '<br>\nTotal words: ' + total;
     oCont.html(text);
 }
 
@@ -35,30 +34,42 @@ function calcWordPoints(word, oPoints) {
     for (var i = 0; i < word.length; i++) {
         total += oPoints[word[i]];
     }
-    console.log('calcWordPoints', word, total);
 
     return total;
 }
 
-function findWords(dict, letters) {
+function findWords(dict, letters, oPoints) {
     var words = []
         , used = {}
         , word, found, index
     ;
-    // debugger;
 
     for (var i = 0; i < dict.length; i++) {
         word = dict[i];
-        if (!word || word.length<2 || word.length > letters.length) {
+        if (
+            !word
+            || word.length<2
+            || word.length > letters.length
+        ) {
             continue;
         }
 
         found = true;
         used = '' + letters;
         for (var j = 0; j < word.length; j++) {
-            debugger;
-            index = used.search(word[j]);
-            if (-1 == index) {
+            if (!(word[j] in oPoints))
+            {
+                found = false;
+                break;
+            }
+
+            try {
+                index = used.search(word[j]);
+            } catch (e) {
+                debugger;
+            }
+
+            if (-1 === index) {
                 found = false;
                 break;
             } else {
@@ -67,7 +78,7 @@ function findWords(dict, letters) {
                 used = used.join('');
             }
         }
-        // debugger;
+
         if (found) {
             words.push(word);
         }
